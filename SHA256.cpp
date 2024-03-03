@@ -37,6 +37,16 @@ unsigned int getFractionalPartOfCubeRootOfPrime(int prime) {
 	return static_cast<unsigned int>(fractionalPart * UINT_MAX);
 }
 
+unsigned int rotateRight(unsigned int value, int n) {
+    const int bits = sizeof(unsigned int) * 8;
+    n = n % bits;
+    if (n == 0) return value;
+
+    unsigned int right = value >> n;
+    unsigned int left = value << (bits - n);
+    return (right | left);
+}
+
 vector<int> getAllPrimesTo(int n) {
 	vector<int> primes;
     for (int i = 2; i <= n; i++) {
@@ -94,13 +104,13 @@ int main() {
 
     int binaryStringLength = binaryString.length();
 
-    int i = 1;
+    int N = 1;
 
-    while (binaryStringLength > 512 * i) {
-        i++;
+    while (binaryStringLength > 512 * N) {
+        N++;
 	}
 
-    int paddedLength = 512 * i - 64 - binaryStringLength;
+    int paddedLength = 512 * N - 64 - binaryStringLength;
 
     binaryStringPadded += "1";
 
@@ -129,14 +139,29 @@ int main() {
 	}
 
     //Splitt each chunk into 16 32-bit words
-    vector<vector<string>> words;
+    vector<string> words;
 
     for (const auto& chunk : chunks) {
-		vector<string> chunkWords;
         for (int i = 0; i < chunk.length(); i += 32) {
-			chunkWords.push_back(chunk.substr(i, 32));
-		}
-		words.push_back(chunkWords);
+            words.push_back(chunk.substr(i, 32));
+        }
+    }
+
+    for (int i = 0; i < N; i++) {
+        for (auto& word : words) // access by reference to avoid copying
+        {
+            unsigned int wordRotated7 = rotateRight(std::stoul(word, nullptr, 0), 7);
+            unsigned int wordRotated18 = rotateRight(std::stoul(word, nullptr, 0), 18);
+            unsigned int shift = std::stoul(word, nullptr, 0) << 3;
+
+            string sigma0 = std::bitset<32>(wordRotated7 ^ wordRotated18 ^ shift).to_string();
+
+            unsigned int wordRotated17 = rotateRight(std::stoul(word, nullptr, 0), 17);
+            unsigned int wordRotated19 = rotateRight(std::stoul(word, nullptr, 0), 19);
+            unsigned int shift = std::stoul(word, nullptr, 0) << 10;
+
+            string sigma1 = std::bitset<32>(wordRotated17 ^ wordRotated19 ^ shift).to_string();
+        }
 	}
 
     return 0;
