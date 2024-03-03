@@ -32,6 +32,18 @@ string getAsciiBinary(int value) {
 }
 
 int main() {
+
+    //Initial hash values
+    // (first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19):
+    unsigned int h0 = 0x6a09e667;
+    unsigned int h1 = 0xbb67ae85;
+    unsigned int h2 = 0x3c6ef372;
+    unsigned int h3 = 0xa54ff53a;
+    unsigned int h4 = 0x510e527f;
+    unsigned int h5 = 0x9b05688c;
+    unsigned int h6 = 0x1f83d9ab;
+    unsigned int h7 = 0x5be0cd19;
+
     string text = "RedBlockBlue";
     vector<string> binaryStrings = stringToAsciiBinary(text);
 
