@@ -61,16 +61,34 @@ int main() {
 
     int length = 0;
 
-    for (int i = 0; i < 64; i++) {
+    string asciiValueOfBinaryStringLength = getAsciiBinary(length);
+
+    int zeros = 64 - asciiValueOfBinaryStringLength.length();
+
+    for (int i = 0; i < zeros; i++) {
 		length = binaryStringLength;
 		binaryStringPadded += (length >> i) & 1 ? '1' : '0';
 	}
 
-    string asciiValueOfBinaryStringLength = getAsciiBinary(length);
-
     binaryStringPadded += asciiValueOfBinaryStringLength;
 
-    cout << binaryStringPadded << endl;
+    //Splitt padded input into 512-bit chunks
+    vector<string> chunks;
+
+    for (int i = 0; i < binaryStringPadded.length(); i += 512) {
+		chunks.push_back(binaryStringPadded.substr(i, 512));
+	}
+
+    //Splitt each chunk into 16 32-bit words
+    vector<vector<string>> words;
+
+    for (const auto& chunk : chunks) {
+		vector<string> chunkWords;
+        for (int i = 0; i < chunk.length(); i += 32) {
+			chunkWords.push_back(chunk.substr(i, 32));
+		}
+		words.push_back(chunkWords);
+	}
 
     return 0;
 }
