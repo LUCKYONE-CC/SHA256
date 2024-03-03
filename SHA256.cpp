@@ -31,8 +31,32 @@ string getAsciiBinary(int value) {
     return binary.to_string();
 }
 
+unsigned int getFractionalPartOfCubeRootOfPrime(int prime) {
+	double root = cbrt(prime);
+	double fractionalPart = root - floor(root);
+	return static_cast<unsigned int>(fractionalPart * UINT_MAX);
+}
+
+vector<int> getAllPrimesTo(int n) {
+	vector<int> primes;
+    for (int i = 2; i <= n; i++) {
+		bool isPrime = true;
+        for (int j = 2; j <= i / 2; j++) {
+            if (i % j == 0) {
+				isPrime = false;
+				break;
+			}
+		}
+        if (isPrime) {
+			primes.push_back(i);
+		}
+	}
+	return primes;
+}
+
 int main() {
 
+#pragma region Constants
     //Initial hash values
     // (first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19):
     unsigned int h0 = 0x6a09e667;
@@ -43,6 +67,19 @@ int main() {
     unsigned int h5 = 0x9b05688c;
     unsigned int h6 = 0x1f83d9ab;
     unsigned int h7 = 0x5be0cd19;
+
+    //Calculation of K0 to K63
+    // (first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311):
+
+    vector<int> primes = getAllPrimesTo(311);
+    vector<unsigned int> KSequence;
+
+    for (int i = 0; i < 64; i++) {
+        KSequence.push_back(getFractionalPartOfCubeRootOfPrime(primes[i]));
+    }
+
+    primes.clear();
+#pragma endregion
 
     string text = "RedBlockBlue";
     vector<string> binaryStrings = stringToAsciiBinary(text);
